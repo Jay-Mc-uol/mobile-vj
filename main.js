@@ -1,8 +1,10 @@
 // Import libraries
 import * as Tone from 'tone';
 import Meyda from 'meyda';
+import { Node, AudioNode, VideoNode, Patch } from './patching-system.js';
 
 // DOM elements
+const patchingCanvas = document.getElementById('patching-canvas');
 const audioInput = document.getElementById('audio-input');
 //const audioSelector = document.getElementById('audio-selector');
 const audioPlayButton = document.getElementById('audio-play');
@@ -21,6 +23,9 @@ const visualizerModeSelect = document.getElementById('visualizer-mode');
 
 let cameraStream = null;
 let micStream = null;
+// Initialize the patching system
+let patch = new Patch();
+
 
 // Audio Context
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -144,7 +149,6 @@ audioEjectButton.addEventListener('click', () => {
         //audioControlButton.innerText = 'Load Audio';
     }
 });
-
 
 // Load video file
 videoInput.addEventListener('change', (event) => {
@@ -402,6 +406,102 @@ function drawRandomSquiggles(amplitudeSpectrum) {
         canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
     }
 }
+
+// Create draggable nodes
+function createNode(type, id) {
+    let node;
+    if (type === 'audio') {
+        node = new AudioNode(id, audioContext);
+    } else if (type === 'video') {
+        node = new VideoNode(id);
+    }
+    patch.addNode(node);
+
+    const nodeElement = document.createElement('div');
+    nodeElement.classList.add('node');
+    nodeElement.draggable = true;
+    nodeElement.innerHTML = `<h3>${type} Node ${id}</h3>`;
+    patchingCanvas.appendChild(nodeElement);
+
+    nodeElement.addEventListener('dragstart', (e) => {
+        e.dataTransfer.setData('nodeId', id);
+    });
+
+    // Handle node drop for connections
+    nodeElement.addEventListener('dragover', (e) => {
+        e.preventDefault(); // Allow drop
+    });
+
+    nodeElement.addEventListener('drop', (e) => {
+        const draggedNodeId = e.dataTransfer.getData('nodeId');
+        const draggedNode = patch.nodes.find(n => n.id === draggedNodeId);
+        if (draggedNode && draggedNode !== node) {
+            draggedNode.connect(node); // Connect nodes
+            console.log(`Node ${draggedNode.id} connected to Node ${node.id}`);
+        }
+    });
+
+    return nodeElement;
+}
+
+// Create some initial nodes for testing
+createNode('audio', 1);
+createNode('video', 2);
+
+
+audioInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        // Create and display audio element
+        audioElement = new Audio(URL.createObjectURL(file));
+        audioElement.controls = true;
+        audioElement.crossOrigin = 'anonymous';
+        document.body.appendChild(audioElement); // Debug: Display audio element for playback controls
+
+        // Connect audio element to AudioContext
+        const source = audioContext.createMediaElementSource(audioElement);
+
+        // Connect the source to the destination (speakers)
+        source.connect(audioContext.destination);        
+
+        // Create Meyda analyzer for visualizing features
+        const analyzer = Meyda.createMeydaAnalyzer({
+            audioContext,
+            source,
+            featureExtractors: ['amplitudeSpectrum', 'rms', 'buffer'],
+            callback: (features) => {
+                drawVisualizer(features.amplitudeSpectrum, features.buffer);
+            },
+        });
+        analyzer.start();
+    }
+});
+
+/*
+// Audio input handling
+audioInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const audioElement = new Audio(URL.createObjectURL(file));
+        audioElement.controls = true;
+        document.body.appendChild(audioElement);
+        const source = audioContext.createMediaElementSource(audioElement);
+        source.connect(audioContext.destination);
+        const audioNode = new AudioNode(1, audioContext);
+        source.connect(audioNode.gainNode);
+        patch.addNode(audioNode);
+    }
+}); */
+
+/*
+// Video input handling
+videoInput.addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (file) {
+        const videoPreview = document.getElementById('video-preview');
+        videoPreview.src = URL.createObjectURL(file);
+    }
+}); */
 
 
 // // Function to draw random squiggles and shapes
