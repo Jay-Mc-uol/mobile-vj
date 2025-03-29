@@ -1,0 +1,37 @@
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: white;
+    display: flex;
+    height: 100vh;
+}
+
+#control-panel {
+    width: 30%;
+    padding: 1rem;
+    background-color: #222;
+    box-shadow: 3px 0 5px rgba(0, 0, 0, 0.5);
+    overflow-y: auto;
+}
+
+#visualizer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: #000;
+    position: relative;
+}
+
+#video-preview {
+    max-width: 100%;
+    max-height: 50%;
+}
+
+canvas {
+    width: 100%;
+    height: 50%;
+    background-color: #111;
+}
