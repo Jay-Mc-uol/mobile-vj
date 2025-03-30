@@ -1,37 +1,47 @@
 body {
-    margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #121212;
-    color: white;
-    display: flex;
-    height: 100vh;
 }
 
-#control-panel {
-    width: 30%;
-    padding: 1rem;
-    background-color: #222;
-    box-shadow: 3px 0 5px rgba(0, 0, 0, 0.5);
-    overflow-y: auto;
+.node {
+    position: absolute; /* Nodes need to be absolutely positioned */
+    width: 150px;
+    height: 100px;
+    background-color: lightgray;
+    border: 1px solid #000;
+    padding: 10px;
+    cursor: pointer;
+    text-align: center;
+    z-index: 1; /* Ensure nodes are above the connectors */
 }
 
-#visualizer {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    background-color: #000;
-    position: relative;
-}
-
-#video-preview {
-    max-width: 100%;
-    max-height: 50%;
-}
-
-canvas {
+#patching-canvas {
+    position: relative; /* Make sure the canvas container is relatively positioned */
     width: 100%;
-    height: 50%;
-    background-color: #111;
+    height: 500px; /* Adjust the canvas size */
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    overflow: hidden;
+}
+
+/* Styling for jsPlumb connectors */
+.jtk-connector {
+    stroke: rgba(0,0,255,0.8); /* Connector line color */
+    stroke-width: 2px;
+    z-index: 0; /* Make sure connectors are below nodes */
+}
+
+.jtk-endpoint {
+    fill: rgba(0,0,255,0.8); /* Endpoint color */
+    stroke: rgba(0,0,255,0.8); /* Endpoint border color */
+}
+
+/* Optional: Styling for connector hover effect */
+.jtk-connector-hover {
+    stroke: rgba(0,255,0,0.8); /* Connector hover color */
+}
+
+.canvas {
+    width: 100%;
+    height: 300px;
+    background: black;
 }
