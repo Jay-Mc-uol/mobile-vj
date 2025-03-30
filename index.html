@@ -3,39 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Media Input and Loading</title>
+    <title>VJing Platform</title>
     <link rel="stylesheet" href="/styles.css">
+
+    <!-- Load JSPlumb and D3.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.15.6/js/jsplumb.min.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
 <body>
     <div id="control-panel">
         <h2>Control Panel</h2>
+
+        <!-- Load Media -->
         <div>
             <h3>Load Media</h3>
             <label for="audio-input">Audio File:</label>
-            <input type="file" id="audio-input" accept="audio/*" multiple>
-         <!--     <select id="audio-selector">
-                <option value="0">Audio 1</option>
-                <option value="1">Audio 2</option>
-                <option value="2">Audio 3</option>
-                <option value="3">Audio 4</option>
-                <option value="4">Audio 5</option>
-            </select> -->
-            <button id="audio-play">Play Audio</button> <!--  Added Play Button -->
-            <button id="audio-stop">Pause Audio</button> <!--  Added Pause Button -->
-            <button id="audio-eject">Eject</button> <!--  Added Eject Button -->
+            <input type="file" id="audio-input" accept="audio/*">
+            <button id="audio-play">Play</button>
+            <button id="audio-stop">Pause</button>
+            <button id="audio-eject">Eject</button>
+
             <br>
             <label for="video-input">Video File:</label>
             <input type="file" id="video-input" accept="video/*">
         </div>
 
+        <!-- Live Input -->
         <div>
             <h3>Live Input</h3>
             <button id="camera-start">Start Camera</button>
             <button id="camera-stop">Stop Camera</button>
             <br>
-            <button id="mic-start">Start Microphone</button>
-            <button id="mic-stop">Stop Microphone</button>
+            <button id="mic-start">Start Mic</button>
+            <button id="mic-stop">Stop Mic</button>
         </div>
+
+        <!-- Add Nodes -->
+        <div>
+            <h3>Nodes</h3>
+            <button id="add-audio-node">Add Audio Node</button>
+            <button id="add-video-node">Add Video Node</button>
+        </div>
+
+        <button id="open-visualizer-window">Open Visualizer in New Window</button>
+        <button id="open-control-panel-window">Open Control Panel in New Window</button>
     </div>
 
     <div id="patching-area">
@@ -51,9 +62,9 @@
             <label for="visualizer-mode">Select Visualization:</label>
             <select id="visualizer-mode">
                 <option value="amplitude">Amplitude Bar Graph</option>
-                <option value="psychedelic">Flower </option>
+                <option value="psychedelic">Flower</option>
                 <option value="waveform">Waveform</option>
-                <option value="random">Random </option>                
+                <option value="random">Random</option>
             </select>
         </div>
         <canvas id="canvas"></canvas>
