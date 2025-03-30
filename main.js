@@ -3,12 +3,12 @@ import Meyda from 'meyda';
 import { initPatchingSystem, createNode } from './patching-system.js';
 
 // Get UI elements
-const audioInput = document.getElementById('audio-input');
+//const audioInput = document.getElementById('audio-input');
 const videoInput = document.getElementById('video-input');
 const videoPreview = document.getElementById('video-preview');
-const audioPlayButton = document.getElementById('audio-play');
-const audioPauseButton = document.getElementById('audio-stop');
-const audioEjectButton = document.getElementById('audio-eject');
+//const audioPlayButton = document.getElementById('audio-play');
+//const audioPauseButton = document.getElementById('audio-stop');
+//const audioEjectButton = document.getElementById('audio-eject');
 const cameraStartBtn = document.getElementById('camera-start');
 const cameraStopBtn = document.getElementById('camera-stop');
 const micStartBtn = document.getElementById('mic-start');
@@ -33,10 +33,30 @@ let analyser = audioContext.createAnalyser();
 analyser.fftSize = 256; // Number of frequency bins
 let dataArray = new Uint8Array(analyser.frequencyBinCount);
 
+let audioSources = []; // Stores MediaElementAudioSourceNodes for each loaded audio
+let analyzers = []; // Meyda analyzers for each audio source
+
+// Ensure AudioContext is running
+document.addEventListener("click", () => {
+    if (audioContext.state !== "running") {
+        audioContext.resume();
+    }
+});
+
 // Initialize patching system
 initPatchingSystem();
 
 //put in separate file
+
+document.getElementById("open-control-panel-window").addEventListener("click", () => {
+    window.open("control-panel.html", "ControlPanel", "width=400,height=600");
+});
+
+document.getElementById("open-visualizer-window").addEventListener("click", () => {
+    window.open("visualizer.html", "Visualizer", "width=800,height=600");
+});
+
+/*
 // Open visualizer in a new window (separate window for projector)
 document.getElementById('open-visualizer-window').addEventListener('click', () => {
     const visualizerWindow = window.open('', 'Visualizer', 'width=800,height=600');
@@ -102,10 +122,35 @@ document.getElementById('open-control-panel-window').addEventListener('click', (
         </body>
         </html>
     `);
-});
+}); */
+
+// ---------------------- GET AUDIO FROM audio-input.js ----------------------
+export function addAudioSource(audioElement) {
+    if (!audioElement) return;
+
+    audioContext.resume().then(() => {
+        let audioSource = audioContext.createMediaElementSource(audioElement);
+        audioSource.connect(audioContext.destination);
+        audioSource.connect(analyser); // Connect to global analyzer
+        audioSources.push(audioSource);
+
+        // Meyda Analyzer for each audio
+        const analyzer = Meyda.createMeydaAnalyzer({
+            audioContext,
+            source: audioSource,
+            featureExtractors: ['amplitudeSpectrum', 'rms', 'buffer'],
+            callback: (features) => {
+                drawVisualizer(features.amplitudeSpectrum, features.buffer);
+            },
+        });
+
+        analyzers.push(analyzer);
+        analyzer.start();
+    });
+}
 
 // ---------------------- AUDIO FILE LOADING ----------------------
-audioInput.addEventListener('change', (event) => {
+/*audioInput.addEventListener('change', (event) => {
     const file = event.target.files[0];
     if (file) {
         if (audioElement) {
@@ -165,7 +210,7 @@ audioEjectButton.addEventListener('click', () => {
         audioElement = null;
         console.log("Audio ejected");
     }
-});
+}); */
 
 // ---------------------- VIDEO ----------------------
 videoInput.addEventListener('change', (event) => {
@@ -174,7 +219,7 @@ videoInput.addEventListener('change', (event) => {
         videoPreview.src = URL.createObjectURL(file);
         console.log("Video file loaded:", file.name);
     }
-});
+}); 
 
 // ---------------------- MICROPHONE ----------------------
 micStartBtn.addEventListener('click', async () => {
@@ -280,9 +325,13 @@ function drawAmplitudeBarGraph(amplitudeSpectrum) {
         canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
     });
 
+    /*if (audioSources.some(source => source.mediaElement && !source.mediaElement.paused)) {
+        requestAnimationFrame(() => drawAmplitudeBarGraph(amplitudeSpectrum));
+    } */
+
     if (audioElement && !audioElement.paused || micStream) {
         requestAnimationFrame(drawVisualizer);
-    }
+    } 
 }
 
 function drawPsychedelicPatterns(amplitudeSpectrum, rms) {
@@ -412,3 +461,12 @@ function drawRandomSquiggles(amplitudeSpectrum) {
         canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
     }
 }
+
+function resizeCanvas() {
+    const canvas = document.getElementById('canvas');
+    canvas.width = window.innerWidth * 0.9;  // Scale based on window size
+    canvas.height = window.innerHeight * 0.5;
+}
+
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas(); // Initial call

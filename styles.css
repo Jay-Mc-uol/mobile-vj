@@ -1,9 +1,196 @@
+
+
 body {
     font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f0f0f0;
 }
 
+#canvas {
+    width: 100%;
+    height: 75%; /* Adjust to match the height of the video preview */
+    background: black;
+    display: block;
+    border-radius: 8px;
+}
+
+/* Top Media Info Bars */
+.top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Space items apart */
+    background: #333;
+    color: white;
+    padding: 10px;
+    margin: 5px;
+}
+
+.top-left {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Add spacing between elements */
+}
+
+.top-right {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Add spacing between buttons */
+}
+
+.top-right button {
+    background: black;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.top-right button:hover {
+    background: #444;
+}
+
+/* Audio File Sections */
+.audio-section {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 10px;
+}
+
+.audio-box {
+    flex: 1;
+    min-width: 22%;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    margin: 5px;
+}
+
+.audio-box button {
+    background: #444;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 5px;
+    margin: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.audio-box button:hover {
+    background: #666;
+}
+
+.audio-box label {
+    position: absolute;
+    top: 10px; 
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.audio-box:hover label {
+    opacity: 1;
+}
+
+.file-upload-btn {
+    width: 40px; /* Adjust size */
+    height: 40px;
+    cursor: pointer;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.file-upload-btn:hover {
+    opacity: 0.7;
+}
+
+/* Monitor Layout */
+.monitor-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 10px;
+}
+
+.monitor {
+    width: 48%;
+    height: 400px; /* Increased height */
+    background: white;
+    border: 2px solid black;
+    text-align: center;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+
+.monitor h3 {
+    position: absolute; 
+    top: 10px; /* Adjust position */
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    opacity: 0;  /* Hide by default */
+    transition: opacity 0.3s ease-in-out;
+}
+
+.monitor:hover h3 {
+    opacity: 1;  /* Show on hover */
+}
+
+video {
+    width: 100%;
+    height: auto;  /* Maintain aspect ratio */
+    max-height: 85%; /* Prevent overflow */
+    object-fit: contain; /* Ensure the whole video is visible */
+}
+
+
+/*video {
+    width: 100%;
+    height: 85%;
+    object-fit: cover;
+    border-radius: 8px;
+} */
+
+/* Controls */
+.controls {
+    display: flex;
+    justify-content: center;
+    margin: 10px;
+}
+
+.controls button {
+    background: black;
+    color: white;
+    margin: 5px;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.controls button:hover {
+    background: #444;
+}
+
+/* Patching Area */
 .node {
-    position: absolute; /* Nodes need to be absolutely positioned */
+    position: absolute;
     width: 150px;
     height: 100px;
     background-color: lightgray;
@@ -11,13 +198,13 @@ body {
     padding: 10px;
     cursor: pointer;
     text-align: center;
-    z-index: 1; /* Ensure nodes are above the connectors */
+    z-index: 1;
 }
 
 #patching-canvas {
-    position: relative; /* Make sure the canvas container is relatively positioned */
+    position: relative;
     width: 100%;
-    height: 500px; /* Adjust the canvas size */
+    height: 500px;
     border: 1px solid #ccc;
     background-color: #f9f9f9;
     overflow: hidden;
@@ -25,23 +212,42 @@ body {
 
 /* Styling for jsPlumb connectors */
 .jtk-connector {
-    stroke: rgba(0,0,255,0.8); /* Connector line color */
+    stroke: rgba(0,0,255,0.8);
     stroke-width: 2px;
-    z-index: 0; /* Make sure connectors are below nodes */
+    z-index: 0;
 }
 
 .jtk-endpoint {
-    fill: rgba(0,0,255,0.8); /* Endpoint color */
-    stroke: rgba(0,0,255,0.8); /* Endpoint border color */
+    fill: rgba(0,0,255,0.8);
+    stroke: rgba(0,0,255,0.8);
 }
 
 /* Optional: Styling for connector hover effect */
 .jtk-connector-hover {
-    stroke: rgba(0,255,0,0.8); /* Connector hover color */
+    stroke: rgba(0,255,0,0.8);
 }
 
-.canvas {
-    width: 100%;
-    height: 300px;
+/* Side Buttons */
+.side-buttons {
+    position: fixed;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+}
+
+.side-buttons button {
     background: black;
+    color: white;
+    margin: 5px;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.side-buttons button:hover {
+    background: #444;
 }
