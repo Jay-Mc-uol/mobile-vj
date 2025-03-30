@@ -32,13 +32,17 @@ body {
     gap: 10px; /* Add spacing between elements */
 }
 
-.top-right {
+.top-middle {
     display: flex;
+    justify-content: flex-start; /* Align the items to the left initially */
     align-items: center;
-    gap: 10px; /* Add spacing between buttons */
+    gap: 15px;
+    margin-left: 20%; /* Moves the center section closer to the right */
+    flex-shrink: 0; /* Prevents the center section from shrinking */
+    
 }
 
-.top-right button {
+.top-middle button {
     background: black;
     color: white;
     border: none;
@@ -48,8 +52,68 @@ body {
     transition: 0.3s;
 }
 
-.top-right button:hover {
+.top-middle button:hover {
     background: #444;
+}
+
+.top-right {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.settings-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.settings-button img {
+    width: 25px;
+    height: 25px;
+}
+
+/* Dropdown Menu Styles */
+.settings-dropdown {
+    display: none;
+    position: absolute;
+    right: 0;
+    top: 35px;
+    background-color: #444;
+    color: white;
+    border: 1px solid #222;
+    border-radius: 5px;
+    width: 150px;
+}
+
+.settings-dropdown ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.settings-dropdown li {
+    padding: 8px;
+    border-bottom: 1px solid #222;
+}
+
+.settings-dropdown li:last-child {
+    border-bottom: none;
+}
+
+.settings-dropdown a {
+    color: white;
+    text-decoration: none;
+    display: block;
+}
+
+.settings-dropdown a:hover {
+    background-color: #555;
+}
+
+/* Show dropdown when activated */
+.settings-dropdown.show {
+    display: block;
 }
 
 /* Audio File Sections */
@@ -112,6 +176,13 @@ body {
 
 .file-upload-btn:hover {
     opacity: 0.7;
+}
+
+.file-name {
+    font-size: 12px;
+    color: #333;
+    margin-top: 5px;
+    word-wrap: break-word;
 }
 
 /* Monitor Layout */

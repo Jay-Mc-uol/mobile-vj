@@ -1,3 +1,5 @@
+import { addAudioSource } from './main.js';
+
 document.addEventListener("DOMContentLoaded", () => {
     for (let i = 1; i <= 4; i++) {
         const fileInput = document.getElementById(`audio-input-${i}`);
@@ -11,6 +13,15 @@ document.addEventListener("DOMContentLoaded", () => {
         // Click image to open file selector
         fileUploadBtn.addEventListener("click", () => {
             fileInput.click();
+        });
+
+        fileInput.addEventListener('change', function () {
+            let fileNameDisplay = document.getElementById(`audio-file-name-${this.id.split('-').pop()}`);
+            if (this.files.length > 0) {
+                fileNameDisplay.textContent = this.files[0].name;
+            } else {
+                fileNameDisplay.textContent = "No file selected";
+            }
         });
 
         fileInput.addEventListener("change", (event) => {
@@ -29,6 +40,10 @@ document.addEventListener("DOMContentLoaded", () => {
             audio.pause();
             audio.src = "";
             fileInput.value = "";
+            
+            // Reset the displayed file name to "No file selected"
+            let fileNameDisplay = document.getElementById(`audio-file-name-${i}`);
+            fileNameDisplay.textContent = "No file selected";
         });
     }
 });

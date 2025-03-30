@@ -16,9 +16,23 @@
             <label for="video-input">Video File:</label>
             <input type="file" id="video-input" accept="video/*">
         </div>
-        <div class="top-right">
+        <div class="top-middle">
+            <label for="projector-controls">Projection:</label>
             <button id="open-control-panel-window">Control Panel</button>
             <button id="open-visualizer-window">Visualizer Window</button>
+        </div>
+        <div class="top-right">
+            <button id="settings-button" class="settings-button">
+                <img src="assets\settings-24.png" alt="Settings">
+            </button>
+            <div id="settings-dropdown" class="settings-dropdown">
+                <ul>
+                    <li><a href="#">General Settings</a></li>
+                    <li><a href="#">Audio Settings</a></li>
+                    <li><a href="#">Video Settings</a></li>
+                    <li><a href="#">Help</a></li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -28,6 +42,7 @@
             <label for="audio-input-1">Audio File 1:</label>
             <input type="file" id="audio-input-1" accept="audio/*" style="display: none;">
             <img src="assets\audiofileuploadicon.png" class="file-upload-btn" data-target="audio-input-1" alt="Upload Audio">
+            <p class="file-name" id="audio-file-name-1">No file selected</p>
             <button id="audio-play-1">Play</button>
             <button id="audio-stop-1">Pause</button>
             <button id="audio-eject-1">Eject</button>
@@ -35,8 +50,9 @@
 
         <div class="audio-box">
             <label for="audio-input-2">Audio File 2:</label>
-            <input type="file" id="audio-input-2" accept="audio/*">
+            <input type="file" id="audio-input-2" accept="audio/*" style="display: none;">
             <img src="assets\audiofileuploadicon.png" class="file-upload-btn" data-target="audio-input-2" alt="Upload">
+            <p class="file-name" id="audio-file-name-2">No file selected</p>
             <button id="audio-play-2">Play</button>
             <button id="audio-stop-2">Pause</button>
             <button id="audio-eject-2">Eject</button>
@@ -44,7 +60,9 @@
 
         <div class="audio-box">
             <label for="audio-input-3">Audio File 3:</label>
-            <input type="file" id="audio-input-3" accept="audio/*">
+            <input type="file" id="audio-input-3" accept="audio/*" style="display: none;">
+            <img src="assets\audiofileuploadicon.png" class="file-upload-btn" data-target="audio-input-3" alt="Upload Audio">
+            <p class="file-name" id="audio-file-name-3">No file selected</p>
             <button id="audio-play-3">Play</button>
             <button id="audio-stop-3">Pause</button>
             <button id="audio-eject-3">Eject</button>
@@ -52,7 +70,9 @@
 
         <div class="audio-box">
             <label for="audio-input-4">Audio File 4:</label>
-            <input type="file" id="audio-input-4" accept="audio/*">
+            <input type="file" id="audio-input-4" accept="audio/*" style="display: none;">
+            <img src="assets\audiofileuploadicon.png" class="file-upload-btn" data-target="audio-input-4" alt="Upload Audio">
+            <p class="file-name" id="audio-file-name-4">No file selected</p>
             <button id="audio-play-4">Play</button>
             <button id="audio-stop-4">Pause</button>
             <button id="audio-eject-4">Eject</button>
@@ -106,8 +126,8 @@
 
     </div>
 
-    <script type ="module" src="audio-input.js"></script>
+    <script type="module" src="settings.js"></script>
     <script type="module" src="main.js"></script>
-
+    <script type ="module" src="audio-input.js"></script>
 </body>
 </html>
