@@ -7,6 +7,96 @@ body {
     background: #f0f0f0;
 }
 
+/* Light Theme */
+body.light-theme {
+    background: #f0f0f0;
+    color: black;
+}
+
+body.light-theme .top-bar {
+    background: #e0e0e0;
+    color: black;
+}
+
+body.light-theme .audio-box {
+    background: white;
+    color: black;
+}
+
+body.light-theme .audio-box button {
+    background: #f0f0f0;
+    color: black;
+}
+
+body.light-theme .controls button {
+    background: #f0f0f0;
+    color: black;
+}
+
+body.light-theme .settings-dropdown {
+    background: #ddd;
+    color: black;
+}
+
+/* Inverse Theme */
+body.inverse-theme {
+    background: #f0f0f0;
+    color: black;
+}
+
+body.inverse-theme .top-bar {
+    background: #444;
+    color: white;
+}
+
+body.inverse-theme .audio-box {
+    background: #333;
+    color: white;
+}
+
+body.inverse-theme .audio-box button {
+    background: #444;
+    color: white;
+}
+
+body.inverse-theme .controls button {
+    background: #444;
+    color: white;
+}
+
+body.inverse-theme .settings-dropdown {
+    background: #333;
+    color: white;
+}
+
+/* Red Theme */
+.red-theme {
+    background-color: red;
+    color: white;
+}
+.red-theme button {
+    background-color: #900;
+}
+
+/* Blue Theme */
+.blue-theme {
+    background-color: blue;
+    color: white;
+}
+.blue-theme button {
+    background-color: #0055ff;
+}
+
+/* Green Theme */
+.green-theme {
+    background-color: green;
+    color: white;
+}
+.green-theme button {
+    background-color: #009900;
+}
+
+
 #canvas {
     width: 100%;
     height: 75%; /* Adjust to match the height of the video preview */
@@ -114,6 +204,65 @@ body {
 /* Show dropdown when activated */
 .settings-dropdown.show {
     display: block;
+}
+
+/* Dropdown submenu for Theme Presets */
+.theme-presets-dropdown {
+    display: none;
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    background-color: #444;
+    position: absolute;
+    left: 0;
+    top: 30px;
+    width: 180px;
+    border-radius: 5px;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+.theme-presets-dropdown li {
+    padding: 8px;
+    color: white;
+}
+
+.theme-presets-dropdown li:hover {
+    background-color: #555;
+}
+
+.dropdown-item:hover .theme-presets-dropdown {
+    display: block;
+}
+
+/* Modal Styling */
+#color-picker-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Override font color for the modal to ensure it stays black */
+#color-picker-modal .color-picker-modal-content {
+    color: black !important;
+}
+
+.color-picker-modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    width: 300px;
+}
+
+button {
+    margin-top: 10px;
 }
 
 /* Audio File Sections */
