@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Panel</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <h2>Control Panel</h2>
+
+    <div>
+        <h3>Load Media</h3>
+        <label for="audio-input">Audio File:</label>
+        <input type="file" id="audio-input" accept="audio/*">
+        <button id="audio-play">Play</button>
+        <button id="audio-stop">Pause</button>
+        <button id="audio-eject">Eject</button>
+
+        <br>
+        <label for="video-input">Video File:</label>
+        <input type="file" id="video-input" accept="video/*">
+    </div>
+
+    <div>
+        <h3>Live Input</h3>
+        <button id="camera-start">Start Camera</button>
+        <button id="camera-stop">Stop Camera</button>
+        <br>
+        <button id="mic-start">Start Mic</button>
+        <button id="mic-stop">Stop Mic</button>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>

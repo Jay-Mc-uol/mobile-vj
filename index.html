@@ -4,61 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VJing Platform</title>
-    <link rel="stylesheet" href="/styles.css">
-
-    <!-- Load JSPlumb and D3.js -->
+    <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.15.6/js/jsplumb.min.js"></script>
     <script src="https://d3js.org/d3.v6.min.js"></script>
 </head>
 <body>
-    <div id="control-panel">
-        <h2>Control Panel</h2>
 
-        <!-- Load Media -->
-        <div>
-            <h3>Load Media</h3>
-            <label for="audio-input">Audio File:</label>
-            <input type="file" id="audio-input" accept="audio/*">
-            <button id="audio-play">Play</button>
-            <button id="audio-stop">Pause</button>
-            <button id="audio-eject">Eject</button>
-
-            <br>
+    <!-- Top Media Info Bars -->
+    <div class="top-bar">
+        <div class="top-left">
             <label for="video-input">Video File:</label>
             <input type="file" id="video-input" accept="video/*">
         </div>
-
-        <!-- Live Input -->
-        <div>
-            <h3>Live Input</h3>
-            <button id="camera-start">Start Camera</button>
-            <button id="camera-stop">Stop Camera</button>
-            <br>
-            <button id="mic-start">Start Mic</button>
-            <button id="mic-stop">Stop Mic</button>
+        <div class="top-middle">
+            <label for="projector-controls">Projection:</label>
+            <button id="open-control-panel-window">Control Panel</button>
+            <button id="open-visualizer-window">Visualizer Window</button>
         </div>
-
-        <!-- Add Nodes -->
-        <div>
-            <h3>Nodes</h3>
-            <button id="add-audio-node">Add Audio Node</button>
-            <button id="add-video-node">Add Video Node</button>
+        <div class="top-right">
+            <button id="settings-button" class="settings-button">
+                <img src="assets\settings-24.png" alt="Settings">
+            </button>
+            <div id="settings-dropdown" class="settings-dropdown">
+                <ul>
+                    <li><a href="#">General Settings</a></li>
+                    <li><a href="#">Audio Settings</a></li>
+                    <li><a href="#">Video Settings</a></li>
+                    <li><a href="#">Help</a></li>
+            
+                    <!-- Theme Presets Section -->
+                    <li class="dropdown-item">
+                        <a href="#">Theme Presets</a>
+                        <ul class="theme-presets-dropdown">
+                            <li><a href="#" id="default-theme">Default Theme</a></li>
+                            <li><a href="#" id="light-theme">Light Theme</a></li>
+                            <li><a href="#" id="inverse-theme">Inverse Theme</a></li>
+                            <li><a href="#" id="red-theme">Red Theme</a></li>
+                            <li><a href="#" id="blue-theme">Blue Theme</a></li>
+                            <li><a href="#" id="green-theme">Green Theme</a></li>
+                            <li><a href="#" id="custom-theme">Custom Theme</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
         </div>
-
-        <button id="open-visualizer-window">Open Visualizer in New Window</button>
-        <button id="open-control-panel-window">Open Control Panel in New Window</button>
     </div>
 
-    <div id="patching-area">
-        <h2>Node-Based Patching</h2>
-        <div id="patching-canvas"></div>
+    <!-- Audio Inputs (4 Self-Contained Sections) -->
+    <div class="audio-section">
+        <div class="audio-box">
+            <label for="audio-input-1">Audio File 1:</label>
+            <input type="file" id="audio-input-1" accept="audio/*" style="display: none;">
+            <img src="assets\audiofileuploadicon.png" class="file-upload-btn" data-target="audio-input-1" alt="Upload Audio">
+            <p class="file-name" id="audio-file-name-1">No file selected</p>
+            <button id="audio-play-1">Play</button>
+            <button id="audio-stop-1">Pause</button>
+            <button id="audio-eject-1">Eject</button>
+        </div>
+
+        <div class="audio-box">
+            <label for="audio-input-2">Audio File 2:</label>
+            <input type="file" id="audio-input-2" accept="audio/*" style="display: none;">
+            <img src="assets\audiofileuploadicon.png" class="file-upload-btn" data-target="audio-input-2" alt="Upload">
+            <p class="file-name" id="audio-file-name-2">No file selected</p>
+            <button id="audio-play-2">Play</button>
+            <button id="audio-stop-2">Pause</button>
+            <button id="audio-eject-2">Eject</button>
+        </div>
+
+        <div class="audio-box">
+            <label for="audio-input-3">Audio File 3:</label>
+            <input type="file" id="audio-input-3" accept="audio/*" style="display: none;">
+            <img src="assets\audiofileuploadicon.png" class="file-upload-btn" data-target="audio-input-3" alt="Upload Audio">
+            <p class="file-name" id="audio-file-name-3">No file selected</p>
+            <button id="audio-play-3">Play</button>
+            <button id="audio-stop-3">Pause</button>
+            <button id="audio-eject-3">Eject</button>
+        </div>
+
+        <div class="audio-box">
+            <label for="audio-input-4">Audio File 4:</label>
+            <input type="file" id="audio-input-4" accept="audio/*" style="display: none;">
+            <img src="assets\audiofileuploadicon.png" class="file-upload-btn" data-target="audio-input-4" alt="Upload Audio">
+            <p class="file-name" id="audio-file-name-4">No file selected</p>
+            <button id="audio-play-4">Play</button>
+            <button id="audio-stop-4">Pause</button>
+            <button id="audio-eject-4">Eject</button>
+        </div>
     </div>
 
-    <div id="visualizer">
-        <h2>Visualizer</h2>
-        <video id="video-preview" autoplay muted></video>
-        <div>
-            <h3>Visualizer Mode</h3>
+    <!-- Video Preview & Output Monitors -->
+    <div class="monitor-container">
+        <div class="monitor">
+            <h3>Visual Assets</h3>
+            <video id="video-preview" autoplay muted></video>
+        </div>
+        <div class="monitor">
+            <h3>Generated Visual Assets</h3>
             <label for="visualizer-mode">Select Visualization:</label>
             <select id="visualizer-mode">
                 <option value="amplitude">Amplitude Bar Graph</option>
@@ -66,10 +108,40 @@
                 <option value="waveform">Waveform</option>
                 <option value="random">Random</option>
             </select>
+            <canvas id="canvas"></canvas>
         </div>
-        <canvas id="canvas"></canvas>
     </div>
 
-    <script type="module" src="/main.js"></script>
+    <!-- Controls Row -->
+    <div class="controls">
+        <button id="camera-start">Camera Input</button>
+        <button id="camera-stop">Stop Camera</button>
+        <button id="camera-presets">Camera Presets</button>
+        <button id="mic-start">Audio Input</button>
+        <button id="mic-stop">Stop Mic</button>
+        <button id="volume-settings">Volume Settings</button>
+    </div>
+
+    <div>
+        <h3>Nodes</h3>
+        <button id="add-audio-node">Add Audio Node</button>
+        <button id="add-video-node">Add Video Node</button>
+    </div>
+
+    <!-- Node-Based Patching Environment -->
+    <div id="patching-area">
+        <h2>Node-Based Patching Environment</h2>
+        <div id="patching-canvas"></div>
+    </div>
+
+    <!-- Side Panel Buttons -->
+    <div class="side-buttons">
+
+
+    </div>
+
+    <script type="module" src="settings.js"></script>
+    <script type="module" src="main.js"></script>
+    <script type ="module" src="audio-input.js"></script>
 </body>
 </html>
