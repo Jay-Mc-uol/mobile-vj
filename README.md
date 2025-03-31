@@ -8,3 +8,8 @@ A web based VJing app developed as part of a BSc Computer Science at the Univers
 ```bash
 git clone https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git
 cd YOUR_REPO_NAME
+
+### 2. Install dependencies
+Make sure you have Node.js installed.
+
+npm install
