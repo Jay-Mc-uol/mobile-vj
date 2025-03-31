@@ -13,8 +13,7 @@
     <!-- Top Media Info Bars -->
     <div class="top-bar">
         <div class="top-left">
-            <label for="video-input">Video File:</label>
-            <input type="file" id="video-input" accept="video/*">
+            <h1>MobileVJ</h1>
         </div>
         <div class="top-middle">
             <label for="projector-controls">Projection:</label>
@@ -27,10 +26,11 @@
             </button>
             <div id="settings-dropdown" class="settings-dropdown">
                 <ul>
-                    <li><a href="#">General Settings</a></li>
-                    <li><a href="#">Audio Settings</a></li>
-                    <li><a href="#">Video Settings</a></li>
-                    <li><a href="#">Help</a></li>
+                    <li><a href="#" id="save-patch-btn">Save Patch</a></li>
+                    <li><a href="#" id="download-patch-btn">⬇️ Download Patch (JSON)</a></li>
+                    <li><a href="#" id="load-patch-btn">Load Patch</a></li>
+                    <li><a href="#" id="upload-patch-btn">📤 Upload Patch (JSON)</a></li>
+                    <li><a href="#" id="clear-patch-btn">Clear Patch</a></li>
             
                     <!-- Theme Presets Section -->
                     <li class="dropdown-item">
@@ -47,6 +47,7 @@
                     </li>
                 </ul>
             </div>
+            <input type="file" id="upload-patch-input" accept=".json" style="display: none;">
         </div>
     </div>
 
@@ -97,7 +98,9 @@
     <div class="monitor-container">
         <div class="monitor">
             <h3>Visual Assets</h3>
-            <video id="video-preview" autoplay muted></video>
+            <canvas id="video-preview" width="640" height="360"></canvas>
+            <video id="video-raw" autoplay muted style="display: none;"></video>
+            <!-- <video id="video-raw" autoplay muted></video>-->
         </div>
         <div class="monitor">
             <h3>Generated Visual Assets</h3>
@@ -114,31 +117,40 @@
 
     <!-- Controls Row -->
     <div class="controls">
-        <button id="camera-start">Camera Input</button>
-        <button id="camera-stop">Stop Camera</button>
-        <button id="camera-presets">Camera Presets</button>
-        <button id="mic-start">Audio Input</button>
+        <button id="mic-start">Start Mic</button>
         <button id="mic-stop">Stop Mic</button>
-        <button id="volume-settings">Volume Settings</button>
     </div>
 
-    <div>
-        <h3>Nodes</h3>
-        <button id="add-audio-node">Add Audio Node</button>
-        <button id="add-video-node">Add Video Node</button>
+    <!-- Node Controls -->
+    <div class="node-controls-container">
+        <!-- 🎧 AUDIO NODES -->
+        <div class="node-section" id="audio-node-section">
+            <h3>🎧 Audio Nodes</h3>
+            <button id="add-audio-node">Add Audio Node</button>
+            <button id="add-audio-processor-node">Add Audio Processor</button>
+            <button id="add-audio-generator-node">Add Audio Generator</button>
+            <button id="add-mic-node">Add Mic Node</button>
+            <button id="add-speaker-node">Add Speaker Node</button>
+            <button id="add-visualizer-node">Add Visualizer Node</button>
+        </div>
+    
+        <!-- 🎥 VISUAL NODES -->
+        <div class="node-section" id="visual-node-section">
+            <h3>🎥 Visual Nodes</h3>
+            <button id="add-camera-node">Add Camera Node</button>
+            <button id="add-video-node">Add Video Node</button>
+            <button id="add-visual-effect-node">Add Visual Effect Node</button>
+            <button id="add-video-visualizer-node">Add Video Visualizer Node</button>
+        </div>
     </div>
-
+  
     <!-- Node-Based Patching Environment -->
     <div id="patching-area">
         <h2>Node-Based Patching Environment</h2>
-        <div id="patching-canvas"></div>
+        <div id="patching-canvas">
+        </div>
     </div>
 
-    <!-- Side Panel Buttons -->
-    <div class="side-buttons">
-
-
-    </div>
 
     <script type="module" src="settings.js"></script>
     <script type="module" src="main.js"></script>

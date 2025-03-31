@@ -1,35 +1,30 @@
-// Code similar to what you already have in the 'drawVisualizer' function
-// This file will handle the visualizer logic when it runs in a separate window
-import * as Tone from 'tone';
-import Meyda from 'meyda';
-
-let currentVisualizerMode = 'amplitude';
 const canvas = document.getElementById('canvas');
-const canvasCtx = canvas.getContext('2d');
+const ctx = canvas.getContext('2d');
 
-// Implement the visualizer rendering logic like your `drawVisualizer` method
+const sourceCanvas = window.opener?.document.getElementById('canvas'); // your visualizer canvas
+const sourceVideo = window.opener?.document.getElementById('video-preview'); // your camera/video
 
-// Example visualization functions
-function drawVisualizer(amplitudeSpectrum, waveform) {
-    switch (currentVisualizerMode) {
-        case 'amplitude':
-            drawAmplitudeBarGraph(amplitudeSpectrum);
-            break;
-        case 'psychedelic':
-            drawPsychedelicPatterns(amplitudeSpectrum, waveform.rms || 0);
-            break;
-        case 'waveform':
-            drawWaveform(waveform);
-            break;
-        case 'random':
-            drawRandomSquiggles(amplitudeSpectrum);
-            break;
+let displayMode = 'visualizer';
+
+window.addEventListener('message', (event) => {
+    const { type, data } = event.data;
+
+    if (type === 'switch-mode') {
+        displayMode = data;
+        canvas.style.display = displayMode === 'visualizer' ? 'block' : 'none';
     }
-}
+});
 
-function drawAmplitudeBarGraph(amplitudeSpectrum) {
-    // Similar to your existing implementation
-    canvasCtx.clearRect(0, 0, canvas.width, canvas.height);
-    canvasCtx.fillStyle = 'white'; // Just an example
-}
+// Draw loop using shared DOM
+function drawLoop() {
+    if (displayMode === 'visualizer' && sourceCanvas) {
+        ctx.drawImage(sourceCanvas, 0, 0, canvas.width, canvas.height);
+    }
 
+    if (displayMode === 'video' && sourceVideo && sourceVideo.readyState >= 2) {
+        ctx.drawImage(sourceVideo, 0, 0, canvas.width, canvas.height);
+    }
+
+    requestAnimationFrame(drawLoop);
+}
+drawLoop();

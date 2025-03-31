@@ -1,14 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizer</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <title>Visualizer</title>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <h2>Visualizer</h2>
-    <canvas id="canvas"></canvas>
-    <script type="module" src="visualiser.js"></script>
+  <div id="visual-container">
+    <canvas id="canvas" width="800" height="450"></canvas>
+    <video id="video-preview" autoplay muted playsinline style="display: none;"></video>
+  </div>
+
+  <script type="module" src="visualiser.js"></script>
 </body>
 </html>

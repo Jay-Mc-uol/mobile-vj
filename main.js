@@ -1,20 +1,20 @@
 import * as Tone from 'tone';
 import Meyda from 'meyda';
-import { initPatchingSystem, createNode } from './patching-system.js';
+import { initPatchingSystem, createNode, savePatch, loadPatch, downloadPatchAsFile, loadPatchFromFile} from './patching-system.js';
 
 // Get UI elements
-//const audioInput = document.getElementById('audio-input');
 const videoInput = document.getElementById('video-input');
 const videoPreview = document.getElementById('video-preview');
-//const audioPlayButton = document.getElementById('audio-play');
-//const audioPauseButton = document.getElementById('audio-stop');
-//const audioEjectButton = document.getElementById('audio-eject');
 const cameraStartBtn = document.getElementById('camera-start');
 const cameraStopBtn = document.getElementById('camera-stop');
 const micStartBtn = document.getElementById('mic-start');
 const micStopBtn = document.getElementById('mic-stop');
 const addAudioNodeBtn = document.getElementById('add-audio-node');
 const addVideoNodeBtn = document.getElementById('add-video-node');
+const addAudioProcessorNodeBtn = document.getElementById('add-audio-processor-node');
+const addAudioGeneratorNodeBtn = document.getElementById('add-audio-generator-node');
+const addMicNodeBtn = document.getElementById('add-mic-node');
+const addVisualizerNodeBtn = document.getElementById('add-visualizer-node');
 
 // Visualizer Canvas
 const visualizerModeSelect = document.getElementById('visualizer-mode');
@@ -24,17 +24,19 @@ const canvasCtx = canvas.getContext('2d');
 let currentVisualizerMode = 'amplitude'; // Default mode
 // Audio setup
 let audioElement = null;
-let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+export const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 let audioSource = null;
 let cameraStream = null;
 let micStream = null;
 let micSource = null;
-let analyser = audioContext.createAnalyser();
+export const analyser = audioContext.createAnalyser();
 analyser.fftSize = 256; // Number of frequency bins
 let dataArray = new Uint8Array(analyser.frequencyBinCount);
 
 let audioSources = []; // Stores MediaElementAudioSourceNodes for each loaded audio
 let analyzers = []; // Meyda analyzers for each audio source
+
+let externalVisualizer = null;
 
 // Ensure AudioContext is running
 document.addEventListener("click", () => {
@@ -46,83 +48,32 @@ document.addEventListener("click", () => {
 // Initialize patching system
 initPatchingSystem();
 
+// Mic Node Visualizer tie in
+window.addEventListener('visualizer-data', (e) => {
+    const { amplitudeSpectrum, waveform } = e.detail;
+    drawVisualizer(amplitudeSpectrum, waveform);
+});
+
+//Projector Canvas Mirroring
+document.getElementById("open-visualizer-window").addEventListener("click", () => {
+    externalVisualizer = window.open("visualizer.html", "Visualizer", "width=800,height=600");
+
+    // Once loaded, pass current canvas
+    setTimeout(() => {
+        if (externalVisualizer) {
+            externalVisualizer.postMessage({
+                type: 'mirror-canvas',
+                data: document.getElementById('canvas')
+            }, '*');
+        }
+    }, 1000);
+});
+
 //put in separate file
 
 document.getElementById("open-control-panel-window").addEventListener("click", () => {
     window.open("control-panel.html", "ControlPanel", "width=400,height=600");
 });
-
-document.getElementById("open-visualizer-window").addEventListener("click", () => {
-    window.open("visualizer.html", "Visualizer", "width=800,height=600");
-});
-
-/*
-// Open visualizer in a new window (separate window for projector)
-document.getElementById('open-visualizer-window').addEventListener('click', () => {
-    const visualizerWindow = window.open('', 'Visualizer', 'width=800,height=600');
-    visualizerWindow.document.write(`
-        <html>
-        <head>
-            <title>Visualizer</title>
-            <link rel="stylesheet" href="/styles.css">
-            <script src="https://d3js.org/d3.v6.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/jsPlumb/2.15.6/js/jsplumb.min.js"></script>
-        </head>
-        <body>
-            <h2>Visualizer</h2>
-            <video id="video-preview" autoplay muted></video>
-            <div>
-                <h3>Visualizer Mode</h3>
-                <label for="visualizer-mode">Select Visualization:</label>
-                <select id="visualizer-mode">
-                    <option value="amplitude">Amplitude Bar Graph</option>
-                    <option value="psychedelic">Flower</option>
-                    <option value="waveform">Waveform</option>
-                    <option value="random">Random</option>
-                </select>
-            </div>
-            <canvas id="canvas"></canvas>
-            <script type="module" src="/visualizer.js"></script>
-        </body>
-        </html>
-    `);
-});
-
-// Open control panel in a new window (separate for users operating the app)
-document.getElementById('open-control-panel-window').addEventListener('click', () => {
-    const controlPanelWindow = window.open('', 'Control Panel', 'width=400,height=600');
-    controlPanelWindow.document.write(`
-        <html>
-        <head>
-            <title>Control Panel</title>
-            <link rel="stylesheet" href="/styles.css">
-        </head>
-        <body>
-            <h2>Control Panel</h2>
-            <div>
-                <h3>Load Media</h3>
-                <label for="audio-input">Audio File:</label>
-                <input type="file" id="audio-input" accept="audio/*">
-                <button id="audio-play">Play</button>
-                <button id="audio-stop">Pause</button>
-                <button id="audio-eject">Eject</button>
-                <br>
-                <label for="video-input">Video File:</label>
-                <input type="file" id="video-input" accept="video/*">
-            </div>
-            <div>
-                <h3>Live Input</h3>
-                <button id="camera-start">Start Camera</button>
-                <button id="camera-stop">Stop Camera</button>
-                <br>
-                <button id="mic-start">Start Mic</button>
-                <button id="mic-stop">Stop Mic</button>
-            </div>
-            <script type="module" src="/main.js"></script>
-        </body>
-        </html>
-    `);
-}); */
 
 // ---------------------- GET AUDIO FROM audio-input.js ----------------------
 export function addAudioSource(audioElement) {
@@ -148,78 +99,6 @@ export function addAudioSource(audioElement) {
         analyzer.start();
     });
 }
-
-// ---------------------- AUDIO FILE LOADING ----------------------
-/*audioInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        if (audioElement) {
-            audioElement.pause();
-        }
-
-        audioElement = new Audio(URL.createObjectURL(file));
-        audioElement.crossOrigin = 'anonymous';
-
-        // Ensure AudioContext is running
-        audioContext.resume().then(() => {
-            if (audioSource) {
-                audioSource.disconnect();
-            }
-            audioSource = audioContext.createMediaElementSource(audioElement);
-            // Connect the source to the destination (speakers)
-            audioSource.connect(audioContext.destination);    
-            audioSource.connect(analyser);
-            analyser.connect(audioContext.destination);
-            const analyzer = Meyda.createMeydaAnalyzer({
-                audioContext,
-                source: audioSource,
-                featureExtractors: ['amplitudeSpectrum', 'rms', 'buffer'],
-                callback: (features) => {
-                    drawVisualizer(features.amplitudeSpectrum, features.buffer);
-                },
-            })
-            analyzer.start();
-        });
-        
-        console.log("Audio file loaded:", file.name);
-    }
-});
-
-audioPlayButton.addEventListener('click', () => {
-    if (audioElement) {
-        audioContext.resume().then(() => {
-            audioElement.play();
-            requestAnimationFrame(drawVisualizer); // Start visualizer when audio plays
-            console.log("Audio playing");
-        });
-    }
-});
-
-audioPauseButton.addEventListener('click', () => {
-    if (audioElement) {
-        audioElement.pause();
-        console.log("Audio paused");
-    }
-});
-
-audioEjectButton.addEventListener('click', () => {
-    if (audioElement) {
-        audioElement.pause();
-        audioElement.src = "";
-        audioElement.load();
-        audioElement = null;
-        console.log("Audio ejected");
-    }
-}); */
-
-// ---------------------- VIDEO ----------------------
-videoInput.addEventListener('change', (event) => {
-    const file = event.target.files[0];
-    if (file) {
-        videoPreview.src = URL.createObjectURL(file);
-        console.log("Video file loaded:", file.name);
-    }
-}); 
 
 // ---------------------- MICROPHONE ----------------------
 micStartBtn.addEventListener('click', async () => {
@@ -258,30 +137,63 @@ micStopBtn.addEventListener('click', () => {
     }
 });
 
-// ---------------------- CAMERA ----------------------
-cameraStartBtn.addEventListener('click', async () => {
-    try {
-        cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
-        videoPreview.srcObject = cameraStream;
-        videoPreview.play();
-        console.log("Camera started");
-    } catch (err) {
-        console.error('Error accessing camera:', err);
-    }
-});
-
-cameraStopBtn.addEventListener('click', () => {
-    if (cameraStream) {
-        cameraStream.getTracks().forEach(track => track.stop());
-        videoPreview.srcObject = null;
-        cameraStream = null;
-        console.log("Camera stopped");
-    }
-});
-
 // ---------------------- NODE CREATION ----------------------
-addAudioNodeBtn.addEventListener('click', () => createNode('audio'));
-addVideoNodeBtn.addEventListener('click', () => createNode('video'));
+document.addEventListener('DOMContentLoaded', () => {
+    // All node button event listeners here
+    document.getElementById('add-audio-node').addEventListener('click', () => createNode('audio'));
+    document.getElementById('add-audio-processor-node').addEventListener('click', () => createNode('audio-processor'));
+    document.getElementById('add-audio-generator-node').addEventListener('click', () => createNode('audio-generator'));
+    document.getElementById('add-mic-node').addEventListener('click', () => createNode('microphone'));
+    document.getElementById('add-speaker-node').addEventListener('click', () => createNode('speaker'));
+    document.getElementById('add-camera-node').addEventListener('click', () => createNode('camera'));
+    document.getElementById('add-video-node').addEventListener('click', () => createNode('video'));
+    document.getElementById('add-visual-effect-node').addEventListener('click', () => createNode('visual-effect'));
+    document.getElementById('add-video-visualizer-node').addEventListener('click', () => createNode('video-visualizer'));
+    document.getElementById('add-visualizer-node').addEventListener('click', () => createNode('visualizer'));
+});
+
+
+// ---------------------- PATCH RETENTION ----------------------
+document.getElementById('save-patch-btn').addEventListener('click', () => {
+    savePatch();
+});
+
+document.getElementById('load-patch-btn').addEventListener('click', () => {
+    loadPatch();
+});
+
+document.getElementById('clear-patch-btn').addEventListener('click', () => {
+    const canvas = document.getElementById('patching-canvas');
+    canvas.innerHTML = '';
+    jsPlumb.getInstance().deleteEveryEndpoint();
+    console.log("Cleared patching canvas.");
+});
+
+document.getElementById('download-patch-btn').addEventListener('click', () => {
+    downloadPatchAsFile();
+});
+
+document.getElementById('upload-patch-btn').addEventListener('click', () => {
+    document.getElementById('upload-patch-input').click();
+});
+
+document.getElementById('upload-patch-input').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+            loadPatchFromFile(data);
+        } catch (err) {
+            alert("Invalid patch file.");
+            console.error(err);
+        }
+    };
+    reader.readAsText(file);
+});
+
 
 // ---------------------- VISUALIZER ----------------------
 // Event listener for dropdown menu
@@ -325,9 +237,6 @@ function drawAmplitudeBarGraph(amplitudeSpectrum) {
         canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
     });
 
-    /*if (audioSources.some(source => source.mediaElement && !source.mediaElement.paused)) {
-        requestAnimationFrame(() => drawAmplitudeBarGraph(amplitudeSpectrum));
-    } */
 
     if (audioElement && !audioElement.paused || micStream) {
         requestAnimationFrame(drawVisualizer);
@@ -347,13 +256,6 @@ function drawPsychedelicPatterns(amplitudeSpectrum, rms) {
     const centerX = canvas.width / 2;
     const centerY = canvas.height / 2;
 
-
-    // Scale patterns by RMS
-    //const scale = rms * 300; // Adjust scaling factor for responsiveness
-    //const centerX = canvas.width / 2;
-    //const centerY = canvas.height / 2;
-
-
     // Draw concentric circles based on the amplitude spectrum
     amplitudeSpectrum.forEach((amp, i) => {
         if (amp > 0.001) { // Avoid very small values
@@ -368,20 +270,6 @@ function drawPsychedelicPatterns(amplitudeSpectrum, rms) {
             canvasCtx.stroke();
         }
     });
-
-
-    // amplitudeSpectrum.forEach((amp, i) => {
-        // const radius = scale * (amp * 2); // Scale radius by amplitude
-        // const hue = (i * 10 + Date.now() / 50) % 360; // Dynamic colors
-
-
-        // canvasCtx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
-        // canvasCtx.lineWidth = amp * 5; // Line thickness changes with amplitude
-        // canvasCtx.beginPath();
-        // canvasCtx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-        // canvasCtx.stroke();
-    // });
-
 
     // Fade out completely if there is no sound
     if (rms < 0.01) {
@@ -467,6 +355,7 @@ function resizeCanvas() {
     canvas.width = window.innerWidth * 0.9;  // Scale based on window size
     canvas.height = window.innerHeight * 0.5;
 }
+
 
 window.addEventListener('resize', resizeCanvas);
 resizeCanvas(); // Initial call

@@ -1,36 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
     <title>Control Panel</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-    <h2>Control Panel</h2>
+    <h2>🎛 Control Panel</h2>
 
     <div>
-        <h3>Load Media</h3>
-        <label for="audio-input">Audio File:</label>
-        <input type="file" id="audio-input" accept="audio/*">
-        <button id="audio-play">Play</button>
-        <button id="audio-stop">Pause</button>
-        <button id="audio-eject">Eject</button>
-
-        <br>
-        <label for="video-input">Video File:</label>
-        <input type="file" id="video-input" accept="video/*">
+        <label for="output-mode">Projector Display:</label>
+        <select id="output-mode">
+            <option value="visualizer">🎨 Generated Visualizer</option>
+            <option value="video">🎥 Camera / Video Feed</option>
+        </select>
     </div>
 
-    <div>
-        <h3>Live Input</h3>
-        <button id="camera-start">Start Camera</button>
-        <button id="camera-stop">Stop Camera</button>
-        <br>
-        <button id="mic-start">Start Mic</button>
-        <button id="mic-stop">Stop Mic</button>
-    </div>
+    <script>
+        let visualizerWindow = null;
 
-    <script type="module" src="main.js"></script>
+        window.addEventListener('load', () => {
+            visualizerWindow = window.open('', 'Visualizer');
+        });
+
+        document.getElementById('output-mode').addEventListener('change', (e) => {
+            const mode = e.target.value;
+            if (visualizerWindow && !visualizerWindow.closed) {
+                visualizerWindow.postMessage({
+                    type: 'switch-mode',
+                    data: mode
+                }, '*');
+            }
+        });
+    </script>
 </body>
 </html>
