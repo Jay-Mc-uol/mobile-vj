@@ -13,3 +13,10 @@ cd YOUR_REPO_NAME
 Make sure you have Node.js installed.
 
 npm install
+
+3. Run the development server
+
+npm run dev
+
+You’ll see a local URL in the terminal (usually http://localhost:5173). Open it in your browser to view the app.
+
